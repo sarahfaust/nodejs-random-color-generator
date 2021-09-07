@@ -1,0 +1,8 @@
+{
+  "name": "nodejs-random-color-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/sarahfaust/nodejs-random-color-generator.git",
+  "author": "sarah faust <sarah.faustmann@gmail.com>",
+  "license": "MIT"
+}
