@@ -56,7 +56,7 @@ if (process.argv[2] && process.argv[3]) {
     console.log('argument does not exist');
   }
 } else {
-  console.log(randomColor());
+  printOutput(randomColor());
 }
 
 /* const readline = require('node:readline').createInterface({
