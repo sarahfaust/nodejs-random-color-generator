@@ -14,6 +14,11 @@ const hueList = [
 
 const luminosityList = ['light', 'bright', 'dark'];
 
+// get cli input
+const inputOne = process.argv[2];
+const inputTwo = process.argv[3];
+
+// get a random or specific color
 const getColor = (luminosity, hue) => {
   return randomColor({
     luminosity: luminosity,
@@ -21,6 +26,7 @@ const getColor = (luminosity, hue) => {
   });
 };
 
+// print standard output
 const printOutput = (color) => {
   console.log(colorOutput.hex(color)('###############################'));
   console.log(colorOutput.hex(color)('###############################'));
@@ -33,75 +39,69 @@ const printOutput = (color) => {
   console.log(colorOutput.hex(color)('###############################'));
 };
 
-if (process.argv[2] && process.argv[3]) {
-  if (
-    luminosityList.includes(process.argv[2]) &&
-    hueList.includes(process.argv[3])
-  ) {
-    printOutput(getColor(process.argv[2], process.argv[3]));
-  } else if (
-    luminosityList.includes(process.argv[3]) &&
-    hueList.includes(process.argv[2])
-  ) {
-    printOutput(getColor(process.argv[3], process.argv[2]));
-  } else {
-    console.log('one or both arguments do not exist');
-  }
-} else if (process.argv[2]) {
-  if (hueList.includes(process.argv[2].toLowerCase())) {
-    printOutput(getColor(0, process.argv[2]));
-  } else if (luminosityList.includes(process.argv[2].toLowerCase())) {
-    printOutput(getColor(process.argv[2], 0));
-  } else {
-    console.log('argument does not exist');
-  }
-} else {
-  printOutput(randomColor());
-}
+// ask user for color details, return color details
+const createCustomColor = () => {
+  const choiceQuestion =
+    'Do you want to generate or pick a color? Type "generate" or "pick": ';
+  const hueQuestion =
+    'What hue should your color be? Choose "red" or "blue", for example: ';
+  const luminosityQuestion =
+    'Choose the luminosity. Your options are "bright", "light" or "dark": ';
 
-/* const readline = require('node:readline').createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+  // read terminal input
+  const readline = require('node:readline');
 
-const pickColor = () => {
-  readline.question(
-    'What hue should your color be? Choose RED or BLUE, for example: ',
-    (hue) => {
-      console.log(hue);
-      readline.question(
-        'Choose the luminosity. Your options are BRIGHT, LIGHT or DARK: ',
-        (luminosity) => {
-          console.log(luminosity);
-        },
-      );
-      readline.close();
-    },
-  );
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const question = (prompt) => {
+    return new Promise((resolve) => {
+      rl.question(prompt, resolve);
+    });
+  };
+
+  (async () => {
+    const choiceAnswer = await question(choiceQuestion);
+    if (choiceAnswer === 'generate') {
+      printOutput(getColor());
+    } else if (choiceAnswer === 'pick') {
+      const hueAnswer = await question(hueQuestion);
+      const luminosityAnswer = await question(luminosityQuestion);
+      if (
+        hueList.includes(hueAnswer) &&
+        luminosityList.includes(luminosityAnswer)
+      ) {
+        printOutput(getColor(luminosityAnswer, hueAnswer));
+      } else {
+        console.log(
+          'This option was not provided, have a random color instead: ',
+        );
+        printOutput(getColor());
+      }
+    }
+    rl.close();
+  })();
 };
 
-readline.question(
-  'Do you want to generate or pick a color? Type GENERATE of PICK: ',
-  (choice) => {
-    console.log('Wise choice!');
-  switch (choice) {
-    case "GENERATE":
-      console.log(randomColor());
-      break;
-    case "PICK":
-      pickColor();
-      break;
-    default:
-      console.log("The option was not provided.");
-      break;
+if (inputOne && inputTwo) {
+  if (luminosityList.includes(inputOne) && hueList.includes(inputTwo)) {
+    printOutput(getColor(inputOne, inputTwo));
+  } else if (luminosityList.includes(inputTwo) && hueList.includes(inputOne)) {
+    printOutput(getColor(inputTwo, inputOne));
   }
-    readline.close();
-    if (choice === 'GENERATE') {
-      console.log(randomColor());
-    } else if (choice === 'PICK') {
-      pickColor();
-    } else {
-      console.log('The option was not provided.');
-    }
-  },
-); */
+} else if (inputOne) {
+  if (inputOne === 'ask') {
+    createCustomColor();
+  } else if (hueList.includes(inputOne.toLowerCase())) {
+    printOutput(getColor(0, inputOne));
+  } else if (luminosityList.includes(inputOne.toLowerCase())) {
+    printOutput(getColor(inputOne, 0));
+  } else {
+    console.log('This argument does not exist, but here is a random color: ');
+    printOutput(getColor());
+  }
+} else {
+  printOutput(getColor());
+}
