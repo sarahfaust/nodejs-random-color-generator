@@ -1,5 +1,6 @@
 const randomColor = require('randomcolor');
 const colorOutput = require('chalk');
+const readline = require('node:readline');
 
 const hueList = [
   'red',
@@ -49,8 +50,6 @@ const createCustomColor = () => {
     'Choose the luminosity. Your options are "bright", "light" or "dark": ';
 
   // read terminal input
-  const readline = require('node:readline');
-
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
