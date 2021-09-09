@@ -90,6 +90,9 @@ if (inputOne && inputTwo) {
     printOutput(getColor(inputOne, inputTwo));
   } else if (luminosityList.includes(inputTwo) && hueList.includes(inputOne)) {
     printOutput(getColor(inputTwo, inputOne));
+  } else {
+    console.log('These arguments do not exist, but here is a random color: ');
+    printOutput(getColor());
   }
 } else if (inputOne) {
   if (inputOne === 'ask') {
