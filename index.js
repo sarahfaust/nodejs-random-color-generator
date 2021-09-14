@@ -28,7 +28,7 @@ const getColor = (luminosity, hue) => {
 };
 
 let outputWidth = 31;
-let outputHeight = 9;
+let outputHeight = 21;
 
 const printFullLine = (lineWidth, lineColor, symbol) => {
   console.log(colorOutput.hex(lineColor)(symbol.repeat(lineWidth)));
@@ -47,7 +47,7 @@ const printColorLine = (sides, space, lineColor, rest) => {
     colorOutput.hex(lineColor)(
       '#'.repeat(sides) +
         ' '.repeat(space) +
-        `${lineColor}` +
+        lineColor +
         ' '.repeat(space) +
         ' '.repeat(rest) +
         '#'.repeat(sides),
@@ -69,11 +69,16 @@ const printOutput = (color) => {
   const overscore = '‾';
   const hash = '#';
 
-  // CASE 1: lineblocks are even and rest is two (= two lines are missing because of flooring)
-  // SOLUTION: print half line at beginning and end and color display line
+  // CASE 1: lineblocks are even and rest is two (case 14)
+  // or uneven and rest is one (case 10)
+  // then two lines are missing because of flooring
+  // SOLUTION: print half line at beginning and end AND color display line
   // these two lines will compensate for the missing ones
-  // test with 11
-  if (lines % 2 === 0 && heightRest === 2) {
+  // test with 14 an 10, respectively
+  if (
+    (lines % 2 === 0 && heightRest === 2) ||
+    (lines % 2 === 1 && heightRest === 1)
+  ) {
     printFullLine(outputWidth, color, underscore);
     for (let i = 0; i < lines; i++) {
       printFullLine(outputWidth, color, hash);
@@ -97,6 +102,7 @@ const printOutput = (color) => {
   // there will one line too much when the color display line is included
   // SOLUTION: print one line less in beginning and ending block and
   // print half lines at the beginning and end instead
+  // test with 12
   else if (lines % 2 === 0 && heightRest === 0) {
     printFullLine(outputWidth, color, underscore);
     for (let i = 1; i < lines; i++) {
@@ -117,7 +123,31 @@ const printOutput = (color) => {
     printFullLine(outputWidth, color, overscore);
   }
 
-  // CASE 3: linesblocks are uneven anyway, no problem! :)
+  // CASE 3: lineblocks are uneven, rest is 2
+  // two lines are missing because of flooring
+  // SOLUTION: add extra line in top and bottom block
+  // by iterating to <= not only <
+  // test with 11
+  else if (lines % 2 === 1 && heightRest === 2) {
+    for (let i = 0; i <= lines; i++) {
+      printFullLine(outputWidth, color, hash);
+    }
+    for (let i = 0; i < dividedLines; i++) {
+      printSpaceLine(sidesWidth, spaceWidth, color);
+    }
+
+    printColorLine(sidesWidth, spaceAroundColor / 2, color, widthRest);
+
+    for (let i = 0; i < dividedLines; i++) {
+      printSpaceLine(sidesWidth, spaceWidth, color);
+    }
+    for (let i = 0; i <= lines; i++) {
+      printFullLine(outputWidth, color, hash);
+    }
+  }
+
+  // CASE 5: linesblocks are uneven anyway and there is no rest, no problem! :)
+  // test with 9
   else {
     for (let i = 0; i < lines; i++) {
       printFullLine(outputWidth, color, hash);
